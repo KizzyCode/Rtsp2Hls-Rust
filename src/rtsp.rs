@@ -47,7 +47,7 @@ impl RtspClient {
             // Ensure that the HLS stream has been updated
             mem::swap(&mut hls_snapshot_new, &mut hls_snapshot);
             let false = hls_snapshot == hls_snapshot_new else {
-                error!("The `ffmpeg` has stalled").log_to_stderr();
+                error!("The `ffmpeg` worker has stalled").log_to_stderr();
                 process::exit(2);
             };
         }
