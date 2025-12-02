@@ -1,0 +1,21 @@
+services:
+  rtsp2hls:
+    build: .
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - tmpfs:/tmp/rtsp2hls
+    working_dir: /tmp/rtsp2hls
+    environment:
+      - RTSP2HLS_SOURCE=rtsps://192.168.178.69:322/streaming/live/1
+      # Optional arguments:
+      #- RTSP2HLS_LISTEN="[::]:8080"
+      #- RTSP2HLS_MAXCONN=1024
+      #- RTSP2HLS_TEMPDIR=/tmp/rtsp2hls
+
+volumes:
+  tmpfs:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: "size=256m,uid=10000"
