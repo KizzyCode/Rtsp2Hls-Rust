@@ -19,7 +19,7 @@ use crate::rtsp::RtspClient;
 use ehttpd::http::{Response, ResponseExt};
 use ehttpd::Server;
 use std::convert::Infallible;
-use std::process;
+use std::{process, thread};
 
 mod config;
 mod error;
@@ -29,8 +29,8 @@ mod rtsp;
 /// The rtsp2hls app runloop
 fn rtsp2hls(config: Config) -> Result<Infallible, Error> {
     // Initialize the RTSP client
-    let rtsp_client = RtspClient::new(&config.RTSP2HLS_SOURCE, &config.RTSP2HLS_TEMPDIR);
-    rtsp_client.spawn()?.detach();
+    let rtsp_client = RtspClient::new(&config.RTSP2HLS_SOURCE, &config.RTSP2HLS_TEMPDIR)?;
+    thread::spawn(move || rtsp_client.start_watchdog());
 
     // Initialize HTTP server with connection callback
     let hls_server_listen = config.RTSP2HLS_LISTEN;
