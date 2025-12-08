@@ -32,14 +32,21 @@ pub struct Config {
     /// The temp directory path, e.g. `/tmp/rtsp2hls`; defaults to [`Self::RTSP2HLS_TEMPDIR_DEFAULT`]. It is recommended
     /// to put the tempdir into an in-memory filesystem.
     pub RTSP2HLS_TEMPDIR: PathBuf,
+    /// If TLS certificate validation should be performed
+    ///
+    /// # Example
+    /// A boolean value like `true`; defaults to [`Self::RTSP2HLS_VERIFYTLS_DEFAULT`].
+    pub RTSP2HLS_VERIFYTLS: bool,
 }
 impl Config {
     /// The default address if [`Self::RTSP2HLS_LISTEN`] is not specified
     pub const RTSP2HLS_LISTEN_DEFAULT: &str = "[::]:8080";
     /// The default amount of connections if [`Self::RTSP2HLS_MAXCONN`] is not specified
     pub const RTSP2HLS_MAXCONN_DEFAULT: &str = "1024";
-    /// The default temp directpry path if [`Self::RTSP2HLS_TEMPDIR`] is not specified
+    /// The default temp directory path if [`Self::RTSP2HLS_TEMPDIR`] is not specified
     pub const RTSP2HLS_TEMPDIR_DEFAULT: &str = "/tmp/rtsp2hls";
+    /// The default TLS certificate validation switch if [`Self::RTSP2HLS_VERIFYTLS`] is not specified
+    pub const RTSP2HLS_VERIFYTLS_DEFAULT: &str = "true";
 
     /// Gets the config from the environment
     pub fn from_env() -> Result<Self, Error> {
@@ -48,6 +55,7 @@ impl Config {
             RTSP2HLS_LISTEN: Self::rtsp2hls_listen()?,
             RTSP2HLS_MAXCONN: Self::rtsp2hls_maxconn()?,
             RTSP2HLS_TEMPDIR: Self::rtsp2hls_tempdir()?,
+            RTSP2HLS_VERIFYTLS: Self::rtsp2hls_verifytls()?,
         })
     }
 
@@ -73,6 +81,12 @@ impl Config {
         let tempdir = Self::env("RTSP2HLS_TEMPDIR", Some(Self::RTSP2HLS_TEMPDIR_DEFAULT))?;
         let tempdir_canonicalized = Path::new(tempdir.as_ref()).canonicalize()?;
         Ok(tempdir_canonicalized)
+    }
+
+    /// Parses the `RTSP2HLS_VERIFYTLS` environment variable, or falls back to [`Self::RTSP2HLS_VERIFYTLS_DEFAULT`]
+    fn rtsp2hls_verifytls() -> Result<bool, Error> {
+        let verifytls = Self::env("RTSP2HLS_VERIFYTLS", Some(Self::RTSP2HLS_VERIFYTLS_DEFAULT))?;
+        Ok(verifytls.parse()?)
     }
 
     /// Gets the environment variable with the given name or returns the default value

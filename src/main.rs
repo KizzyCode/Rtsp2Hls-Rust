@@ -29,7 +29,7 @@ mod rtsp;
 /// The rtsp2hls app runloop
 fn rtsp2hls(config: Config) -> Result<Infallible, Error> {
     // Initialize the RTSP client
-    let rtsp_client = RtspClient::new(&config.RTSP2HLS_SOURCE, &config.RTSP2HLS_TEMPDIR)?;
+    let rtsp_client = RtspClient::new(&config)?;
     thread::spawn(move || rtsp_client.start_watchdog());
 
     // Initialize HTTP server with connection callback

@@ -11,26 +11,25 @@
 # `rtsp2hls`
 Welcome to `rtsp2hls` 🎉
 
-`rtsp2hls` is a trivial wrapper-application around `ffmpeg` to fetch an `rtsp://`-stream and serve it as HLS livestream
-**without** reencoding. It works by invoking `ffmpeg` to create a filesystem-backed HLS stream, and then provides a
-simple HTTP server to serve the playlist. The application can be used to e.g. transform video streams from IP cameras or
-similar into an HLS livestream you can simply view or embed in a browser.
+`rtsp2hls` is a trivial wrapper-application around `gstreamer` to fetch an `rtsp://`-stream and serve it as HLS
+livestream **without** reencoding. It works by invoking `gstreamer` to create a filesystem-backed HLS stream, and then
+provides a simple HTTP server to serve the playlist. The application can be used to e.g. transform video streams from IP
+cameras or similar into an HLS livestream you can simply view or embed in a browser.
 
 ## Usage
 The application is configured via environment variables only:
 - `RTSP2HLS_SOURCE`: The RTSP source URL, e.g. `rtsps://192.168.178.69:322/streaming/live/1`. This parameter is
   **required**.
-- `RTSP2HLS_LISTEN`: The address for the HTTP/HLS server to listen on. This parameter is optional, and defaults to
+- `RTSP2HLS_LISTEN`: The address for the HTTP/HLS server to listen on. This parameter is optional and defaults to
   `[::]:8080`.
 - `RTSP2HLS_MAXCONN`: The maximum amount of simultaneous connections the HTTP/HLS server will accept. This parameter is
-  optional, and defaults to `1024`.
-- `RTSP2HLS_TEMPDIR`: The temp directory for `ffmpeg` to write the HLS playlist to. This parameter is optional, and
+  optional and defaults to `1024`.
+- `RTSP2HLS_TEMPDIR`: The temp directory for `gstreamer` to write the HLS playlist to. This parameter is optional and
   defaults to `/tmp/rtsp2hls`. Note: As the folder contains only temporary data, but has continious I/O, it is
   recommended to put it onto a memory-backed filesystem.
+- `RTSP2HLS_VERIFYTLS`: A boolean configuration switch to enable/disable TLS certificate validation. This parameter is
+  optional and defaults to `true`. Note: Use with caution.
 
 ## Security Considerations
-- **No TLS verification**: Due to limitations in `ffmpeg`, it does not validate TLS certificates for
-  `rtsps://`-connections. This allows for MitM-attacks between `rtsp2hls` and your stream source. If that is a security
-  concern, it is recommended to use a secure overlay network to protect this link.
 - **No authentication for the HTTP/HLS server**: The HTTP/HLS server does not provide an authentication layer for
   incoming requests. If that is a security concern, it is recommended to put the server behind an authentication proxy.
