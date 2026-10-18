@@ -1,7 +1,7 @@
 //! HLS request handlers to serve a filesystem-backed HLS stream
 
 use crate::config::Config;
-use ehttpd::http::{Request, Response, ResponseExt};
+use ehttpd::http::{Request, Response};
 use std::fs::File;
 
 /// Handles a GET request for `/index.m3u8`

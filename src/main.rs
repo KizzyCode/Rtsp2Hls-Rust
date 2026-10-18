@@ -16,8 +16,8 @@
 use crate::config::Config;
 use crate::error::Error;
 use crate::rtsp::RtspClient;
-use ehttpd::http::{Response, ResponseExt};
 use ehttpd::Server;
+use ehttpd::http::Response;
 use std::convert::Infallible;
 use std::{process, thread};
 

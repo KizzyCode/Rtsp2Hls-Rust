@@ -12,3 +12,6 @@
 !.vscode/tasks.json
 !.vscode/extensions.json
 !.vscode/settings.json
+
+# Ignore devcontainer
+.devcontainer/*

@@ -1,7 +1,7 @@
 [package]
 name = "rtsp2hls"
-version = "0.2.0"
-edition = "2021"
+version = "0.3.0"
+edition = "2024"
 authors = ["KizzyCode Software Labs./Keziah Biermann <development@kizzycode.de>"]
 keywords = []
 categories = []
@@ -25,7 +25,7 @@ default = []
 
 
 [dependencies]
-ehttpd = { version = "0.11.0", default-features = false, features = ["server"] }
+ehttpd = { version = "0.14.0", default-features = false, features = ["server"] }
 
 [dev-dependencies]
 
