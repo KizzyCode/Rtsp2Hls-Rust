@@ -1,5 +1,6 @@
 //! RTSP client task
 
+use crate::command::CommandExt;
 use crate::config::Config;
 use crate::error;
 use crate::error::Error;
@@ -74,15 +75,19 @@ struct RtspClientProcess {
 impl RtspClientProcess {
     /// The desired length of each HLS segment
     const SEGMENT_LENGTH: Duration = Duration::from_secs(1);
+    /// The amount of HLS-ts segments to include in the playlist (at least 3)
+    const PLAYLIST_LENGTH: u32 = 3;
     /// The amount of HLS-ts segments to retain
-    const SEGMENT_COUNT: u32 = 2;
+    ///
+    /// Note: Keep two playlist windows, one extra segment as grace, and the segment currently being written.
+    const SEGMENT_COUNT: u32 = Self::PLAYLIST_LENGTH * 2 + 2;
 
     /// Creates a new RTSP-to-HLS client for the given RTSP source URL
     pub fn new(config: &Config) -> Result<Self, Error> {
         // Assemble combined arguments
         let rtspsrc = format!("location={}", config.RTSP2HLS_SOURCE);
         let max_files = format!("max-files={}", Self::SEGMENT_COUNT);
-        let playlist_length = format!("playlist-length={}", Self::SEGMENT_COUNT);
+        let playlist_length = format!("playlist-length={}", Self::PLAYLIST_LENGTH);
         let target_duration = format!("target-duration={}", Self::SEGMENT_LENGTH.as_secs());
 
         // Select TLS validation flags
@@ -105,7 +110,7 @@ impl RtspClientProcess {
             // Specify playlist and fragment paths relativ to the working dir
             .arg("playlist-location=index.m3u8").arg("location=live-%08d.ts")
             // Spawn within tempdir as our working dir
-            .current_dir(&config.RTSP2HLS_TEMPDIR).spawn()?;
+            .current_dir(&config.RTSP2HLS_TEMPDIR).scoped_spawn()?;
 
         // Init self
         Ok(Self { child })

@@ -21,6 +21,7 @@ use ehttpd::http::Response;
 use std::convert::Infallible;
 use std::{process, thread};
 
+mod command;
 mod config;
 mod error;
 mod hls;
